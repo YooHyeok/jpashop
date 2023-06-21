@@ -16,3 +16,4 @@ spring:
 logging:
   level:
     org.hibernate.sql: debug # jpa와 hibernate에 대한 sql이 logger를 통해 출력된다.
+    org.hibernate.type: trace # logger에서 파라미터 바인딩 정보를 출력
