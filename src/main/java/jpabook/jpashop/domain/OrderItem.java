@@ -1,10 +1,7 @@
 package jpabook.jpashop.domain;
 
 import jpabook.jpashop.domain.item.Item;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -61,5 +58,4 @@ public class OrderItem {
     public int getTotalPrice() {
         return this.getOrderPrice() * getCount();
     }
-
 }
