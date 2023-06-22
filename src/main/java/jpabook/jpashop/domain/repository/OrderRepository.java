@@ -101,7 +101,7 @@ public class OrderRepository {
         }
         // 회원 이름 검색
         if (StringUtils.hasText(memberName)) {
-            Predicate name = cb.like(m.get("name"), memberName);
+            Predicate name = cb.like(m.get("name"), "%" + memberName + "%");
             criteria.add(name);
         }
 
@@ -115,7 +115,7 @@ public class OrderRepository {
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanBuilder)
      */
-    public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+    /*public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
         String memberName = orderSearch.getMemberName(); //회원이름
         OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
 
@@ -136,13 +136,13 @@ public class OrderRepository {
                 .offset(0)
                 .limit(1000)
                 .fetch();
-    }
+    }*/
 
     /**
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanExpression)
      */
-    QOrder order = QOrder.order;
+    /*QOrder order = QOrder.order;
     QMember member = QMember.member;
     public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
         String memberName = orderSearch.getMemberName(); //회원이름
@@ -164,6 +164,6 @@ public class OrderRepository {
     }
     private BooleanExpression allAndEq(String memberName, OrderStatus orderStatus) {
         return orderStatusEq(orderStatus).and(memberNameEq(memberName));
-    }
+    }*/
 
 }
