@@ -138,4 +138,32 @@ public class OrderRepository {
                 .fetch();
     }
 
+    /**
+     * [주문 전체조회] <br/>
+     * 동적쿼리 - queryDsl(BooleanExpression)
+     */
+    QOrder order = QOrder.order;
+    QMember member = QMember.member;
+    public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+        String memberName = orderSearch.getMemberName(); //회원이름
+        OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
+        return queryFactory
+                .selectFrom(order)
+                .join(member)
+                .where(orderStatusEq(orderStatus).and(memberNameEq(memberName)))
+                .offset(0)
+                .limit(1000)
+                .fetch();
+
+    }
+    private BooleanExpression orderStatusEq(OrderStatus orderStatus) { // Predicate도 가능
+        return orderStatus == null ? null : order.orderStatus.eq(orderStatus); // 조건절에 null이 오면 무시된다.
+    }
+    private BooleanExpression memberNameEq(String memberName) {
+        return (!StringUtils.hasText(memberName)) ? null : member.name.eq(memberName);
+    }
+    private BooleanExpression allAndEq(String memberName, OrderStatus orderStatus) {
+        return orderStatusEq(orderStatus).and(memberNameEq(memberName));
+    }
+
 }
