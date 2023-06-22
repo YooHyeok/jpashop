@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain.repository;
 
+import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +9,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -39,8 +40,8 @@ public class OrderRepository {
         String jpql = "select o from Order o join o.member m";
         boolean isFirstCondition = true; //조건여부 true
 
-        String memberName = orderSearch.getMemberName();
-        OrderStatus orderStatus = orderSearch.getOrderStatus();
+        String memberName = orderSearch.getMemberName(); //회원이름
+        OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
 
         // 주문 상태 검색
         if (orderStatus != null) { // 검색조건 중 주문상태가 존재할 경우 where
@@ -77,4 +78,35 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * [주문 전체조회] <br/>
+     * 동적쿼리 - JPA Criteria
+     */
+    public List<Order> findAllByCriteria(OrderSearch orderSearch) {
+        String memberName = orderSearch.getMemberName(); //회원이름
+        OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Order> cq = cb.createQuery(Order.class);
+        Root<Order> o = cq.from(Order.class);
+        Join<Order, Member> m = o.join("member", JoinType.INNER); //주문 - 회원 Inner Join
+
+        List<Predicate> criteria = new ArrayList<>();
+
+        // 주문 상태 검색
+        if (orderStatus != null) {
+            Predicate status = cb.equal(o.get("status"), orderStatus);
+            criteria.add(status);
+        }
+        // 회원 이름 검색
+        if (StringUtils.hasText(memberName)) {
+            Predicate name = cb.like(m.get("name"), memberName);
+            criteria.add(name);
+        }
+
+        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+        TypedQuery<Order> query = em.createQuery(cq)
+                .setMaxResults(1000);// 최대 1000건
+        return query.getResultList();
+    }
 }
