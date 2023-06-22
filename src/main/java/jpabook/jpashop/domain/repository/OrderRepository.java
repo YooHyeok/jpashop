@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderRepository {
     private final EntityManager em;
-    JPAQueryFactory queryFactory = new JPAQueryFactory(em);;
+
 
     /**
      * [주문(주문저장)]
@@ -111,6 +111,7 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+//    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     /**
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanBuilder)
@@ -169,9 +170,10 @@ public class OrderRepository {
     }*/
 
     /**
-     * queryDsl - 강의 버전
+     * [주문 전체조회] <br/>
+     * 동적쿼리 - queryDsl - 강의 버전
      */
-    public List<Order> findAll(OrderSearch orderSearch) {
+    /*public List<Order> findAll(OrderSearch orderSearch) {
         QOrder order = QOrder.order;
         QMember member = QMember.member;
         return queryFactory
@@ -186,6 +188,6 @@ public class OrderRepository {
     }
     private BooleanExpression nameLike(String memberName, QMember member) {
         return (!StringUtils.hasText(memberName)) ? null : member.name.like(memberName);
-    }
+    }*/
 
 }
