@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderRepository {
     private final EntityManager em;
+    JPAQueryFactory queryFactory = new JPAQueryFactory(em);;
 
     /**
      * [주문(주문저장)]
@@ -109,4 +110,32 @@ public class OrderRepository {
                 .setMaxResults(1000);// 최대 1000건
         return query.getResultList();
     }
+
+    /**
+     * [주문 전체조회] <br/>
+     * 동적쿼리 - queryDsl(BooleanBuilder)
+     */
+    public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+        String memberName = orderSearch.getMemberName(); //회원이름
+        OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (orderStatus != null) {
+            QOrder order = QOrder.order;
+            builder.and(order.orderStatus.eq(orderStatus));
+        }
+        if (StringUtils.hasText(memberName)) {
+            QMember member = QMember.member;
+            builder.and(member.name.eq(memberName));
+        }
+        return queryFactory
+                .selectFrom(order)
+                .join(member)
+                .where(builder)
+                .offset(0)
+                .limit(1000)
+                .fetch();
+    }
+
 }
