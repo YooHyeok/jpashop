@@ -33,4 +33,11 @@ public class Category {
     @OneToMany(mappedBy = "parent") // 바로 위의 부모 필드와 양방향 연관관계 (Self)
     private List<Category> child = new ArrayList<>();
 
+    /**
+     * 양방향 연관관계 편의 메소드
+     */
+    public void addChildCategory(Category child) {
+        this.child.add(child);
+        child.setParent(this);
+    }
 }
