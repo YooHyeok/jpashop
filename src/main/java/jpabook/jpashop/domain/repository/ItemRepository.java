@@ -14,7 +14,7 @@ public class ItemRepository {
     private final EntityManager em;
 
     /**
-     * 상품 주문
+     * 상품 등록
      */
     public void save(Item item) {
         if (item.getId() == null) { //item id가 존재하지 않으면 영속성 컨텍스트에 등록
