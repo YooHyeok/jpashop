@@ -11,9 +11,9 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true) // 읽기전용(select) - 더티체킹X, DB리소스절약 등의 이점
+@RequiredArgsConstructor
 public class MemberService {
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository; // @RequiredArgsConstructor에 의해 생성자 의존성 자동 주입됨
 
     /**
      * 회원 가입
