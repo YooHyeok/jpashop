@@ -21,7 +21,7 @@ class MemberServiceTest {
         Member member = new Member();
         member.setName("yoo");
 
-        //when - persist로 인해 1차캐시에 등록 / flush하지 않았으므로 insert문이 날라가지 않는다.
+        //when - persist로 인해 1차캐시에 등록 & flush하지 않았으므로 insert문이 날라가지 않는다.
         Long saveId = memberService.join(member); // select쿼리 발생 이유는 join메소드에서 저장직전 name중복여부를 select쿼리로 체킹하기때문.
 
         //then - 1차캐시로부터 객체를 반환받으므로 동일한 객체임을 보장받는다.
