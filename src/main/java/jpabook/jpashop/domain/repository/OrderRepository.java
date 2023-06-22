@@ -131,7 +131,7 @@ public class OrderRepository {
         }
         return queryFactory
                 .selectFrom(order)
-                .join(member)
+                .join(order.member, member)
                 .where(builder)
                 .offset(0)
                 .limit(1000)
@@ -142,28 +142,50 @@ public class OrderRepository {
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanExpression)
      */
-    /*QOrder order = QOrder.order;
-    QMember member = QMember.member;
-    public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+    /*public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
         String memberName = orderSearch.getMemberName(); //회원이름
         OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
+
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+
         return queryFactory
                 .selectFrom(order)
-                .join(member)
-                .where(orderStatusEq(orderStatus).and(memberNameEq(memberName)))
+                .join(order.member, member)
+                .where(allAndEq(memberName, orderStatus, order, member))
                 .offset(0)
                 .limit(1000)
                 .fetch();
 
     }
-    private BooleanExpression orderStatusEq(OrderStatus orderStatus) { // Predicate도 가능
+    private BooleanExpression orderStatusEq(OrderStatus orderStatus, QOrder order) { // Predicate도 가능
         return orderStatus == null ? null : order.orderStatus.eq(orderStatus); // 조건절에 null이 오면 무시된다.
     }
-    private BooleanExpression memberNameEq(String memberName) {
+    private BooleanExpression memberNameEq(String memberName, QMember member) {
         return (!StringUtils.hasText(memberName)) ? null : member.name.eq(memberName);
     }
-    private BooleanExpression allAndEq(String memberName, OrderStatus orderStatus) {
-        return orderStatusEq(orderStatus).and(memberNameEq(memberName));
+    private BooleanExpression allAndEq(OrderStatus orderStatus, String memberName, QOrder order, QMember member) {
+        return orderStatusEq(orderStatus, order).and(memberNameEq(memberName, member));
     }*/
+
+    /**
+     * queryDsl - 강의 버전
+     */
+    public List<Order> findAll(OrderSearch orderSearch) {
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+        return queryFactory
+                .selectFrom(order)
+                .join(order.member, member)
+                .where(statusEq(orderStatus, order).and(nameLike(memberName, member)))
+                .limit(1000)
+                .fetch();
+    }
+    private BooleanExpression orderStatusEq(OrderStatus orderStatus, QOrder order) {
+        return orderStatus == null ? null : order.orderStatus.eq(orderStatus);
+    }
+    private BooleanExpression nameLike(String memberName, QMember member) {
+        return (!StringUtils.hasText(memberName)) ? null : member.name.like(memberName);
+    }
 
 }
