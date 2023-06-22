@@ -77,7 +77,7 @@ public class Order {
      * 상품상태를 취소로 변경 <br/>
      * 주문한 상품들을 반복하여 cancel() 한다. <br/>
      * (cancel()은 재고를 원상복구 하는 기능으로 주문 상품에서 재고를 관리하기 때문에 OrderItem으로 부터 호출)*/
-    public void cance() {
+    public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) { // 배송이 출발 되었다면
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다."); //취소 불가
         }
