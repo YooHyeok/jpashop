@@ -62,4 +62,15 @@ public class OrderController {
         return "order/orderList";
     }
 
+    /**
+     * [주문 취소] 주문 취소 <br/>
+     * orderList.html 최 하단 자바스크립트 코드를 통한 매핑
+     * @param model
+     * @return 주문내역html
+     */
+    @PostMapping("/orders/{orderId}/cancel")
+    public String cancelOrder(@PathVariable("orderId") Long orderId) {
+        orderService.cancelOrder(orderId);
+        return "redirect:/orders";
+    }
 }
