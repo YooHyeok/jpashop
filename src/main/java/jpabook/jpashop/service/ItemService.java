@@ -25,6 +25,21 @@ public class ItemService { // 위임만 하게된다면 바로 Repository에 접
     }
 
     /**
+     * 상품 수정 [transaction 변경감지]
+     * @param book
+     */
+    @Transactional(readOnly = false)
+    public void updateItem(Long itemId, BookForm form) {
+        Book findBook = (Book) itemRepository.findOne(itemId); //영속 엔티티 - @Transactional에 의해 변경감지확인.
+        findBook.setId(itemId);
+        findBook.setName(form.getName());
+        findBook.setPrice(form.getPrice());
+        findBook.setStockQuantity(form.getStockQuantity());
+        findBook.setAuthor(form.getAuthor());
+        findBook.setIsbn(form.getIsbn());
+    }
+
+    /**
      * 상품 단건 조회
      */
     public Item findOne(Long itemId) {
