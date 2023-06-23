@@ -6,8 +6,9 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.domain.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.exception.NotEnoughStockException;
+import jpabook.jpashop.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +28,8 @@ class OrderServiceTest {
     @PersistenceContext
     EntityManager em;
 
-    @Autowired OrderService orderService;
+    @Autowired
+    OrderService orderService;
     @Autowired OrderRepository orderRepository;
 
     @Test
