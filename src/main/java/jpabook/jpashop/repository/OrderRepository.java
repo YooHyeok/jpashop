@@ -52,19 +52,19 @@ public class OrderRepository {
             } else {  // 조건여부 false이면 and
                 jpql += " and";
             }
-            jpql += "o.status = :status"; // 조건 추가
+            jpql += " o.status = :status"; // 조건 추가
         }
 
         // 회원 이름 검색
 
-        if (memberName != null) {
+        if (StringUtils.hasText(memberName)) {
             if (isFirstCondition) {
                 jpql += " where";
                 isFirstCondition = false;
             } else {
                 jpql += " and";
             }
-            jpql += "m.name like :name"; // 조건 추가
+            jpql += " m.name like :name"; // 조건 추가
         }
 
         TypedQuery<Order> query = em.createQuery(jpql, Order.class)
