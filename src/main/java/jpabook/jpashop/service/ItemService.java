@@ -1,6 +1,8 @@
 package jpabook.jpashop.service;
 
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
+import jpabook.jpashop.form.BookForm;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,9 @@ public class ItemService { // 위임만 하게된다면 바로 Repository에 접
      * 상품 등록
      */
     @Transactional(readOnly = false)
-
     public void saveItem(Item item) {
         itemRepository.save(item);
     }
-
 
     /**
      * 상품 단건 조회
@@ -37,4 +37,5 @@ public class ItemService { // 위임만 하게된다면 바로 Repository에 접
     public List<Item> findItems() {
         return itemRepository.findAll();
     }
+
 }
