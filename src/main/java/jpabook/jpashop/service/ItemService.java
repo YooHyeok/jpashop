@@ -34,7 +34,7 @@ public class ItemService { // 위임만 하게된다면 바로 Repository에 접
     /**
      * 상품 전체 조회
      */
-    public List<Item> findAll() {
+    public List<Item> findItems() {
         return itemRepository.findAll();
     }
 }
