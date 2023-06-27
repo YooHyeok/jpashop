@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,6 +75,42 @@ public class MemberApiController {
     }
 
     /**
+     * 회원 조회 API v2 <br/>
+     * 엔티티 -> DTO 변환
+     * @return Result<T> : {count:__ , data: [{name: ''},{name: ''},,,]}
+     */
+    @GetMapping("/api/v2/members")
+    public Result membersV2() {
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+        return new Result(collect.size(), collect);
+    }
+
+    /**
+     * 반환할 클래스 <br/>
+     * 반환할 값들에 대한 유연성을 보장 (반환할 값이 추가될 수 있음을 대비)
+     * @param <T>
+     */
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data;
+    }
+
+    /**
+     * 변환할 클래스
+     */
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+
+    /**
      * 회원 수정 API request 파라미터용 Dto
      */
     @Data
@@ -111,5 +148,6 @@ public class MemberApiController {
             this.id = id;
         }
     }
+
 
 }
