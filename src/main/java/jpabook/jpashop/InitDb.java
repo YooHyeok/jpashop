@@ -74,7 +74,7 @@ public class InitDb {
             em.persist(member);
             Book book1 = createBook("SPRING1 BOOK", 20000, 200);
             em.persist(book1);
-            Book book2 = createBook("SPRING1 BOOK", 40000, 300);
+            Book book2 = createBook("SPRING2 BOOK", 40000, 300);
             em.persist(book2);
             /* 주문상품 생성 */
             OrderItem orderItem1 = OrderItem.createOrderItem(book1, book1.getPrice(), 3);
