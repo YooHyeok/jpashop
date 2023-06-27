@@ -12,7 +12,7 @@ spring:
       hibernate:
 #        show_sql: true #로그를 켜놨기때문에 중복으로 출력된다.
         format_sql: true
-
+        default_batch_fetch_size: 100 # 지연로딩 성능 최적화(in절 파라미터 갯수) : 1+N -> 1+1
 logging:
   level:
     org.hibernate.sql: debug # jpa와 hibernate에 대한 sql이 logger를 통해 출력된다.

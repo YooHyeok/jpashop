@@ -67,6 +67,27 @@ public class OrderApiController {
     }
 
     /**
+     * 주문 컬렉션 조회 V3.3 - 페이징 <br/>
+     * toOne 관계만 우선 모두 페치조인으로 최적화 <br/>
+     * N+1 발생할 수 밖에 없음 - Order & Member & Delivery(1) - Items(2) < OrderItems(2) <br/>
+     * 컬렉션 관계는 지연로딩 성능 최적화 해야한다. <br/>
+     * (hibernate.default_batch_fetch_size={__} / @BatchSize) <br/>
+     * URL : http://localhost:8080/api/v3.1/orders?offset=1&limit=2
+     * @param offset
+     * @param limit
+     * @return
+     */
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> orderV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                       @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+        List<OrderDto> result = orders.stream()
+                .map(order -> new OrderDto(order))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    /**
      * Order 엔터티를 변환할 Dto 내부클래스
      */
     @Data

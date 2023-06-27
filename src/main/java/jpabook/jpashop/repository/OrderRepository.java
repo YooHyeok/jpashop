@@ -139,6 +139,26 @@ public class OrderRepository {
                 .getResultList();
     }
 
+    /**
+     * [주문 전체조회 API 3.1] - 컬렉션 패치조인 페이징 <br/>
+     * Order 입장에서 xToOne 관계 엔터티만 Join을 건다. <br/>
+     * 나머지 xToMany 관계는 지연로딩 즉, 객체탐색을 통해 조회한다. <br/>
+     * -> OrderItems를 출력할때 in(_,_)쿼리 발생 <br/>
+     * hibernate.default_batch_fetch_size를 100으로 지정한다.
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select distinct o from Order o " +
+                                "join fetch o.member m " +
+                                "join fetch o.delivery d ") // 컬렉션 패치조인
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
 //    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     /**
      * [주문 전체조회] <br/>
