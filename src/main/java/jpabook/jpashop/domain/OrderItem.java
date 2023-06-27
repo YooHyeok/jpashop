@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpabook.jpashop.domain.item.Item;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class OrderItem {
     @JoinColumn(name = "item_id") //연관관계 주인 : item
     private Item item;
 
+    @JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id") // 연관관계의 주인 : order
     private Order order;
