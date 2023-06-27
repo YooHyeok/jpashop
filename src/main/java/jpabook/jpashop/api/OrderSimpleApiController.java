@@ -60,10 +60,10 @@ public class OrderSimpleApiController {
      * @return
      */
     @GetMapping("/api/v2/simple-orders")
-    public List<OrderDto> ordersV2() {
+    public List<SimpleOrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
-        List<OrderDto> result = orders.stream()
-                .map(order -> new OrderDto(order))// OrderDto로 반복 변환
+        List<SimpleOrderDto> result = orders.stream()
+                .map(order -> new SimpleOrderDto(order))// OrderDto로 반복 변환
                 .collect(Collectors.toList()); // 변환한 Dto 객체들을 List로 변환
         return result;
 
@@ -76,10 +76,10 @@ public class OrderSimpleApiController {
      * @return
      */
     @GetMapping("/api/v3/simple-orders")
-    public List<OrderDto> ordersV3() {
+    public List<SimpleOrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithMemberDelivery();
-        List<OrderDto> result = orders.stream()
-                .map(order -> new OrderDto(order))
+        List<SimpleOrderDto> result = orders.stream()
+                .map(order -> new SimpleOrderDto(order))
                 .collect(Collectors.toList());
         return result;
     }
@@ -88,40 +88,20 @@ public class OrderSimpleApiController {
      * Order에 대한 Dto변환
      */
     @Data
-    static class OrderDto {
+    static class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime localDateTime;
         private OrderStatus orderStatus;
         private Address address;
-        private List<OrderItemDto> orderItems;
 
-        public OrderDto(Order order) {
+        public SimpleOrderDto(Order order) {
             this.orderId = order.getId();
             this.name = order.getMember().getName(); // Lazy 초기화 (영속성컨텍스트 검색후 없으면 DB쿼리 호출)
             this.localDateTime = order.getOrderDate();
             this.orderStatus = order.getStatus();
             this.address = order.getDelivery().getAddress(); // Lazy 초기화 (영속성컨텍스트 검색후 없으면 DB쿼리 호출)
-            this.orderItems = order.getOrderItems().stream()// Lazy 초기화 (영속성컨텍스트 검색후 없으면 DB쿼리 호출)
-                    .map(orderItem -> new OrderItemDto(orderItem))
-                    .collect(Collectors.toList());
+
         }
     }
-
-    /**
-     * OrderItem에 대한 Dto 변환
-     */
-    @Data
-    static class OrderItemDto {
-        private String itemName;
-        private int orderPrice;
-        private int  count;
-
-        public OrderItemDto(OrderItem orderItem) {
-            this.itemName = orderItem.getItem().getName();
-            this.orderPrice = orderItem.getOrderPrice();
-            this.count = orderItem.getCount();
-        }
-    }
-
 }
