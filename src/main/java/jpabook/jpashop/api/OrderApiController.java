@@ -100,6 +100,15 @@ public class OrderApiController {
     }
 
     /**
+     * 주문 컬렉션 조회 V5 - JPQL DTO 직접 조회 (컬렉션 조회 최적화) <br/>
+     * In 쿼리로 최적화된다.
+     */
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_Optimization();
+    }
+
+    /**
      * Order 엔터티를 변환할 Dto 내부클래스
      */
     @Data
