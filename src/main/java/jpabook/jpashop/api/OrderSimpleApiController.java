@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Or;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderSimpleApiController {
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     /**
      * 주문 조회 API V1 - 엔터티 직접 노출
@@ -82,6 +85,16 @@ public class OrderSimpleApiController {
                 .map(order -> new SimpleOrderDto(order))
                 .collect(Collectors.toList());
         return result;
+    }
+
+    /**
+     * 주문조회 API V4 - 엔티티 -> DTO로 바로조회 <br/>
+     * 리포지토리 재사용성이 떨어진다. <br/>
+     * API스펙에 맞춘 코드가 리포지토리에 들어가는 단점이 있다.
+     */
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 
     /**
