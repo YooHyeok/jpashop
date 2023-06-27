@@ -3,11 +3,10 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.form.MemberForm;
 import jpabook.jpashop.service.MemberService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -44,6 +43,37 @@ public class MemberApiController {
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
+
+    /**
+     * 회원 수정 API
+     */
+    @PutMapping("/api/v2/members/{id}")
+    public UpdateMemberResponse updateMember(@PathVariable("id") Long id,
+                                               @RequestBody
+                                               @Valid UpdateMemberRequest request) {
+        memberService.update(id, request.getName());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
+    /**
+     * 회원 수정 API request 파라미터용 Dto
+     */
+    @Data
+    static class UpdateMemberRequest {
+        private String name;
+    }
+
+    /**
+     * 회원 수정 API update용 응답 Dto
+     */
+    @Data
+    @AllArgsConstructor
+    static class UpdateMemberResponse {
+        private Long id;
+        private String name;
+    }
+
 
     /**
      * API requset 파라미터를 위한 임시 DTO

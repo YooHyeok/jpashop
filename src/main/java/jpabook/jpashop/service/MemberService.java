@@ -25,6 +25,15 @@ public class MemberService {
     }
 
     /**
+     * 회원 수정(API) - 변경감지 <br/>
+     * 이름 변경
+     */
+    @Transactional(readOnly = false)
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
+    /**
      * 중복회원 검증 메소드
      * @param member
      */
