@@ -111,6 +111,21 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * [주문 전체조회] - 패치조인<br/>
+     * distinct : 1대 다 조인이 있으므로 데이터베이스 Row증가. <br/>
+     * 같은 엔티티의 조회 수도 증가하게 된다. <br/>
+     * JPA의 Distinct는 같은 엔터티가 조회되면, 에플리케이션에서 중복을 걸러준다. <br/>
+     * (order가 컬렉션 페치조인때문에 중복조회되는 것을 막아준다.)
+     */
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select distinct o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d ") // 컬렉션 패치조인
+                .getResultList();
+    }
+
 //    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     /**
      * [주문 전체조회] <br/>

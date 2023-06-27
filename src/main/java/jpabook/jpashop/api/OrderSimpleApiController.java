@@ -51,6 +51,7 @@ public class OrderSimpleApiController {
     }
 
     /**
+     * 주문조회 API V2 - 엔티티를 DTO로 변환 <br/>
      * 지연 로딩으로 너무 많은 SQL을 실행한다. (N+1) <br/>
      * Order 2개 (1번) 1 +2+2+2
      *  -> Member1, Delivery(address), OrderItem, Item <br/>
@@ -66,6 +67,21 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList()); // 변환한 Dto 객체들을 List로 변환
         return result;
 
+    }
+
+    /**
+     * 주문조회 API V3 - DTO변환 - Fetch 조인 최적화 <br/>
+     * 패치조인으로 SQL이 한번만 실행된다. <br/>
+     * dis
+     * @return
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<OrderDto> result = orders.stream()
+                .map(order -> new OrderDto(order))
+                .collect(Collectors.toList());
+        return result;
     }
 
     /**
