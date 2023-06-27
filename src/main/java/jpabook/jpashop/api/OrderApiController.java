@@ -8,12 +8,14 @@ import jpabook.jpashop.repository.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,6 +47,19 @@ public class OrderApiController {
     @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        List<OrderDto> result = orders.stream()
+                .map(order -> new OrderDto(order))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    /**
+     * 주문 컬렉션 조회 V3 - 컬렉션 패치조인 최적화
+     * 패치조인으로 SQL이 한번만 실행된다. <br/>
+     */
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
         List<OrderDto> result = orders.stream()
                 .map(order -> new OrderDto(order))
                 .collect(Collectors.toList());

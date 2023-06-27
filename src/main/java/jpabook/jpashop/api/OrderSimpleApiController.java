@@ -75,7 +75,6 @@ public class OrderSimpleApiController {
     /**
      * 주문조회 API V3 - DTO변환 - Fetch 조인 최적화 <br/>
      * 패치조인으로 SQL이 한번만 실행된다. <br/>
-     * dis
      * @return
      */
     @GetMapping("/api/v3/simple-orders")
