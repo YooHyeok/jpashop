@@ -2,10 +2,7 @@ package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.repository.ItemRepository;
-import jpabook.jpashop.repository.MemberRepository;
-import jpabook.jpashop.repository.OrderRepository;
-import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +13,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
-    private final MemberRepository memberRepository;
+    private final MemberEmRepository memberEmRepository;
+    private final MemberRepository memberRepository;// SpringDataJPA 리포지토리
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
 
@@ -31,7 +29,8 @@ public class OrderService {
     @Transactional(readOnly = false)
     public Long order(Long memberId, Long itemId, int count) {
         // 엔터티 조회
-        Member member = memberRepository.findOne(memberId);
+//        Member member = memberEmRepository.findOne(memberId);
+        Member member = memberRepository.findById(memberId).get();//SpringDataJPA 변경 반영
         Item item = itemRepository.findOne(itemId);
         // 배송정보 생성
         Delivery delivery = new Delivery();

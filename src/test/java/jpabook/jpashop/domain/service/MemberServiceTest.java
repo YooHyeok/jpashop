@@ -1,7 +1,7 @@
 package jpabook.jpashop.domain.service;
 
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberEmRepository;
 import jpabook.jpashop.service.MemberService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 class MemberServiceTest {
     @Autowired
     MemberService memberService;
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MemberEmRepository memberRepository;
 
     @Test
     public void 회원가입() throws Exception {
