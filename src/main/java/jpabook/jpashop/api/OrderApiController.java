@@ -127,29 +127,27 @@ public class OrderApiController {
         List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
         // ^ OrderFlatDto 타입으로 전체 조인 결과 조회
         return flats.stream()
-                .collect(Collectors.groupingBy( //(OrderQueryDto, List<OrderItemQueryDto>) 그룹핑
+                .collect(Collectors.groupingBy( //(OrderQueryDto, List<OrderItemQueryDto>) 그룹핑 -> @EqualsHashCode(of="orderId)" 기준으로 매핑 되므로 중복이 제거된다.
                         // Map<OrderQueryDto, List<OrderFlatDto>>
-
-                        // OrderFlatDto를 OrderQueryDto로 매핑하고
-                        // OrderQueryDto에 저장된 List<OrderItemQueryDto> 리스트에 OrderFlatDto를 누적한 Map생성
+                        // OrderFlatDto를 OrderQueryDto로 매핑하고 [Key]로 사용
                         orderFlatDto ->
                             {return new OrderQueryDto(orderFlatDto.getOrderId(),
                                                         orderFlatDto.getName(),
                                                         orderFlatDto.getOrderDate(),
                                                         orderFlatDto.getOrderStatus(),
                                                         orderFlatDto.getAddress());
-                            }// Function<T, K>  -> T를 K로 매핑하고 K에 저장된 D 객체에 T를 누적한 Map 생성
+                            }
+                        // OrderFlatDto를 OrderQueryDto로 매핑하고 [Key]로 사용
                             ,Collectors.mapping(
-                                    // OrderFlatDto를 OrderItemQueryDto로 매핑한 뒤 리스트로 반환
+                                    // OrderFlatDto를 OrderItemQueryDto로 매핑한 뒤 리스트로 반환하여 [Value]로 사용
                                     orderFlatDto ->
                                             new OrderItemQueryDto(orderFlatDto.getOrderId(),
                                                                     orderFlatDto.getItemName(),
                                                                     orderFlatDto.getOrderPrice(),
                                                                     orderFlatDto.getCount())
-                                            // Function<OrderFlatDto, OrderItemQueryDto>
                                             , Collectors.toList()
-                                            // , Collector<OrderItemQueryDto, ?, List>
-                            )// Collector<T,A,D> -> T를 K로 매핑하고 K에 저장된 D 객체에 T를 누적한 Map 생성
+                                    // OrderFlatDto를 OrderItemQueryDto로 매핑한 뒤 리스트로 반환하여 [Value]로 사용
+                            )
                         )
                 )
                 .entrySet().stream() // entrySet으로 변환후 map(중복 제거)
