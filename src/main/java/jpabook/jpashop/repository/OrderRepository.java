@@ -1,8 +1,10 @@
 package jpabook.jpashop.repository;
 
-import jpabook.jpashop.domain.Member;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jpabook.jpashop.domain.*;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -159,23 +161,27 @@ public class OrderRepository {
                 .getResultList();
     }
 
-//    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+    //=== === === === === === === === queryDls 코드 구현=== === === === === === === ===//
+
+
     /**
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanBuilder)
      */
-    /*public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+    public List<Order> findAllByQuerydsl1(OrderSearch orderSearch) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         String memberName = orderSearch.getMemberName(); //회원이름
         OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
 
         BooleanBuilder builder = new BooleanBuilder();
 
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+
         if (orderStatus != null) {
-            QOrder order = QOrder.order;
-            builder.and(order.orderStatus.eq(orderStatus));
+            builder.and(order.status.eq(orderStatus));
         }
         if (StringUtils.hasText(memberName)) {
-            QMember member = QMember.member;
             builder.and(member.name.eq(memberName));
         }
         return queryFactory
@@ -185,13 +191,14 @@ public class OrderRepository {
                 .offset(0)
                 .limit(1000)
                 .fetch();
-    }*/
+    }
 
     /**
      * [주문 전체조회] <br/>
      * 동적쿼리 - queryDsl(BooleanExpression)
      */
-    /*public List<Order> findAllByQuerydsl(OrderSearch orderSearch) {
+    public List<Order> findAllByQuerydsl2(OrderSearch orderSearch) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         String memberName = orderSearch.getMemberName(); //회원이름
         OrderStatus orderStatus = orderSearch.getOrderStatus(); //주문상태
 
@@ -208,14 +215,14 @@ public class OrderRepository {
 
     }
     private BooleanExpression orderStatusEq(OrderStatus orderStatus, QOrder order) { // Predicate도 가능
-        return orderStatus == null ? null : order.orderStatus.eq(orderStatus); // 조건절에 null이 오면 무시된다.
+        return orderStatus == null ? null : order.status.eq(orderStatus); // 조건절에 null이 오면 무시된다.
     }
     private BooleanExpression memberNameEq(String memberName, QMember member) {
         return (!StringUtils.hasText(memberName)) ? null : member.name.eq(memberName);
     }
-    private BooleanExpression allAndEq(OrderStatus orderStatus, String memberName, QOrder order, QMember member) {
+    private BooleanExpression allAndEq(String memberName, OrderStatus orderStatus, QOrder order, QMember member) {
         return orderStatusEq(orderStatus, order).and(memberNameEq(memberName, member));
-    }*/
+    }
 
     /**
      * [주문 전체조회] <br/>
