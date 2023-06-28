@@ -68,7 +68,7 @@ public class OrderQueryRepository {
                 .getResultList();
     }
 
-    //=== === === === === === === === === 컬렉션 조회 최적화 시작 === === === === === === === === ===//
+    //=== === === === === === === === === === === === 컬렉션 조회 최적화 시작 === === === === === === === === === === === ===//
 
     /**
      * 주문 조회 V5 - 컬렉션 Dto 직접 조회 [최적화] <br/>
@@ -112,8 +112,25 @@ public class OrderQueryRepository {
                 .setParameter("orderIds", orderIds)
                 .getResultList();
         return orderItems.stream()
-                .collect(Collectors.groupingBy(OrderItemQueryDto -> OrderItemQueryDto.getOrderId()));
-        // ^
+                .collect(Collectors.groupingBy(OrderItemQueryDto -> {
+                    return OrderItemQueryDto.getOrderId();
+                }));
+    }
 
+    //=== === === === === === === === === === === === 컬렉션 조회 [플랫 최적화] 시작 === === === === === === === === === === === ===//
+
+    /**
+     * 주문 조회 V6 - 컬렉션 Dto 직접 조회 [플랫 최적화]
+     */
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return em.createQuery("select " +
+                "new jpabook.jpashop.repository.order.query.OrderFlatDto" +
+                "(o.id, m.name, o.orderDate, d.address, o.status, i.name, oi.orderPrice, oi.count) " +
+                "from Order o " +
+                "join o.member m " +
+                "join o.delivery d " +
+                "join o.orderItems oi " +
+                "join oi.item i", OrderFlatDto.class)
+                .getResultList();
     }
 }

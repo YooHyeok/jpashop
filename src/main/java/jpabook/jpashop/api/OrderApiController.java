@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.*;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -106,6 +108,48 @@ public class OrderApiController {
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_Optimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+        // ^ OrderFlatDto 타입으로 전체 조인 결과 조회
+        return flats.stream()
+                .collect(Collectors.groupingBy( //(OrderQueryDto, List<OrderItemQueryDto>) 그룹핑
+                        // Map<OrderQueryDto, List<OrderFlatDto>>
+
+                        // OrderFlatDto를 OrderQueryDto로 매핑하고
+                        // OrderQueryDto에 저장된 List<OrderItemQueryDto> 리스트에 OrderFlatDto를 누적한 Map생성
+                        orderFlatDto ->
+                            {return new OrderQueryDto(orderFlatDto.getOrderId(),
+                                                        orderFlatDto.getName(),
+                                                        orderFlatDto.getOrderDate(),
+                                                        orderFlatDto.getOrderStatus(),
+                                                        orderFlatDto.getAddress());
+                            }// Function<T, K>  -> T를 K로 매핑하고 K에 저장된 D 객체에 T를 누적한 Map 생성
+                            ,Collectors.mapping(
+                                    // OrderFlatDto를 OrderItemQueryDto로 매핑한 뒤 리스트로 반환
+                                    orderFlatDto ->
+                                            new OrderItemQueryDto(orderFlatDto.getOrderId(),
+                                                                    orderFlatDto.getItemName(),
+                                                                    orderFlatDto.getOrderPrice(),
+                                                                    orderFlatDto.getCount())
+                                            // Function<OrderFlatDto, OrderItemQueryDto>
+                                            , Collectors.toList()
+                                            // , Collector<OrderItemQueryDto, ?, List>
+                            )// Collector<T,A,D> -> T를 K로 매핑하고 K에 저장된 D 객체에 T를 누적한 Map 생성
+                        )
+                )
+                .entrySet().stream() // entrySet으로 변환후 map(중복 제거)
+                .map(entry -> new OrderQueryDto(entry.getKey().getOrderId()
+                                            , entry.getKey().getName()
+                                            , entry.getKey().getOrderDate()
+                                            , entry.getKey().getOrderStatus()
+                                            , entry.getKey().getAddress()
+                                            , entry.getValue()
+                ))
+                .collect(Collectors.toList());
+
     }
 
     /**
