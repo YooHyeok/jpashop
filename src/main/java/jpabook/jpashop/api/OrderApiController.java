@@ -9,6 +9,7 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.order.query.OrderQueryService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,8 +42,13 @@ public class OrderApiController {
             // stream().foreach() : 루프를 사용해서 하나씩 객체 탐색
         }
         return all;
+        /**
+         * Open Session In View = false <br/>
+         * Service단으로부터 반환받는다. <br/>
+         */
     }
 
+    private final OrderQueryService orderQueryService;
     /**
      * 주문 컬렉션 조회 V2 - 엔티티 DTO로 변환
      * N+1현상 발생 - 총 쿼리 수 : 11 <br/>
@@ -51,11 +57,17 @@ public class OrderApiController {
      */
     @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2() {
-        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        /*List<Order> orders = orderRepository.findAllByString(new OrderSearch());
         List<OrderDto> result = orders.stream()
                 .map(order -> new OrderDto(order))
                 .collect(Collectors.toList());
-        return result;
+        return result;*/
+        /**
+         * Open Session In View = false <br/>
+         * Service단으로부터 반환받는다. <br/>
+         */
+        List<OrderDto> orders = orderQueryService.findAllByString(new OrderSearch());
+        return orders;
     }
 
     /**
@@ -156,7 +168,7 @@ public class OrderApiController {
      * Order 엔터티를 변환할 Dto 내부클래스
      */
     @Data
-    static class OrderDto {
+    public static class OrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate; //주문시간
@@ -179,7 +191,7 @@ public class OrderApiController {
      * Order의 OrderItem 엔터티를 변환할 Dto 내부클래스
      */
     @Data
-    static class OrderItemDto {
+    public static class OrderItemDto {
         private String itemName;//상품 명
         private int orderPrice; //주문 가격
         private int count; //주문 수량
